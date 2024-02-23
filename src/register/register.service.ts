@@ -9,6 +9,7 @@ import { CreateSalesmanDTO } from './dto/createsalesman.dto';
 import { Product } from './entities/product.entity';
 import { UpdateSalesmanDTO } from './dto/updatesalesman.dto';
 import { CreateProductDTO } from './dto/createproduct.dto';
+import { ShoppingCart } from './entities/shoppingCar.entity';
 
 @Injectable()
 export class RegisterService {
@@ -21,6 +22,9 @@ export class RegisterService {
 
     @InjectRepository(Product)
     private readonly productRepository: Repository<Product>,
+
+    @InjectRepository(ShoppingCart)
+    private readonly shoppingCartRepository: Repository<ShoppingCart>,
   ) {}
 
   async findAllUSer() {
@@ -99,7 +103,7 @@ export class RegisterService {
     }
   }
 
-  async marketCar(cnpj: string, id: number, addToCar: boolean) {
+  async marketCar(cnpj: string, id: number, addToCar: boolean, cpf: string) {
     let car: number = 0;
     const salesman = await this.salesmanRepository.findOne({
       where: { cnpj },
@@ -117,12 +121,19 @@ export class RegisterService {
     return car;
   }
 
-  // async payment(wallet: number, amount: number, cpf: string) {
-  //   const wallet = await this.userRepository.find({
-  //     cpf,
-  //     wallet,
-  //   });
-  // }
+  async payment(wallet: number, amount: number, cpf: string) {
+    const user = await this.userRepository.findOne({
+      where: { cpf },
+    });
+
+    if (!user) {
+      throw new NotFoundException('Usuário não cadastrado');
+    }
+
+    this.checkWallet(cpf);
+
+    let money = user.wallet;
+  }
 
   private async preloadProductByName(name: string): Promise<Product> {
     const products = await this.productRepository.findOne({

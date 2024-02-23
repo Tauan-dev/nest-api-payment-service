@@ -1,4 +1,12 @@
-import { Column, Entity, PrimaryColumn, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  OneToOne,
+  PrimaryColumn,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
+import { ShoppingCart } from './shoppingCar.entity';
 
 @Entity('users')
 export class Users {
@@ -19,4 +27,9 @@ export class Users {
 
   @Column()
   wallet: number;
+
+  @OneToOne(() => ShoppingCart, (shoppingcart) => shoppingcart.users)
+  @JoinColumn()
+  shoppingCart: ShoppingCart;
+    shoppingcart: any;
 }
