@@ -1,6 +1,6 @@
 import { IsNumber, IsString } from 'class-validator';
 
-export class CreateProduct {
+export class CreateProductDTO {
   @IsNumber()
   readonly id: number;
 
@@ -11,5 +11,5 @@ export class CreateProduct {
   readonly type: string;
 
   @IsNumber()
-  readonly price: string;
+  readonly price: number;
 }

@@ -1,4 +1,5 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { Product } from './product.entity';
 
 @Entity('salesmans')
 export class Salesman {
@@ -19,4 +20,9 @@ export class Salesman {
 
   @Column()
   amount: number;
+
+  @OneToMany(() => Product, (product) => product.salesman, {
+    cascade: true,
+  })
+  product: Product[];
 }

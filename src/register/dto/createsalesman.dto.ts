@@ -1,4 +1,6 @@
+import { Type } from 'class-transformer';
 import { IsNumber, IsString } from 'class-validator';
+import { CreateProductDTO } from './createproduct.dto';
 
 export class CreateSalesmanDTO {
   @IsString()
@@ -18,4 +20,7 @@ export class CreateSalesmanDTO {
 
   @IsNumber()
   amount: number;
+
+  @Type(() => CreateProductDTO)
+  products: CreateProductDTO[];
 }
