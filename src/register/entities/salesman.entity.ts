@@ -1,5 +1,6 @@
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { Product } from './product.entity';
+import { ShoppingCart } from './shoppingCar.entity';
 
 @Entity('salesmans')
 export class Salesman {
@@ -25,4 +26,9 @@ export class Salesman {
     cascade: true,
   })
   product: Product[];
+
+  @OneToMany(() => ShoppingCart, (shoppingcart) => shoppingcart.salesman, {
+    cascade: true,
+  })
+  shoppingcart: ShoppingCart;
 }

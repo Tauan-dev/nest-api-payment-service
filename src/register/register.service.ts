@@ -13,6 +13,7 @@ import { ShoppingCart } from './entities/shoppingCar.entity';
 
 @Injectable()
 export class RegisterService {
+  shoppingValue: number;
   constructor(
     @InjectRepository(Users)
     private readonly userRepository: Repository<Users>,
@@ -104,7 +105,6 @@ export class RegisterService {
   }
 
   async marketCar(cnpj: string, id: number, addToCar: boolean, cpf: string) {
-    let car: number = 0;
     const salesman = await this.salesmanRepository.findOne({
       where: { cnpj },
       relations: ['products'],
@@ -115,24 +115,51 @@ export class RegisterService {
     }
     const product = salesman.product.find((product) => product.id === id);
 
-    if (product && addToCar) {
-      car += product.price;
-    }
-    return car;
-  }
-
-  async payment(wallet: number, amount: number, cpf: string) {
     const user = await this.userRepository.findOne({
       where: { cpf },
+      relations: ['shopping'],
+    });
+
+    if (!user) {
+      throw new NotFoundException('Usuário  não cadastrado');
+    }
+
+    if (product && addToCar) {
+      user.shoppingcart.shoppingValue += product.price;
+      await this.shoppingCartRepository.save(user.shoppingcart);
+    }
+    return product.salesman.cnpj;
+  }
+
+  async payment(wallet: number, amount: number, cpf: string, cnpj: string) {
+    let car: number = 0;
+    const user = await this.userRepository.findOne({
+      where: { cpf },
+      relations: ['shopping'],
     });
 
     if (!user) {
       throw new NotFoundException('Usuário não cadastrado');
     }
 
+    const salesman = await this.salesmanRepository.findOne({
+      where: { cnpj },
+    });
+
     this.checkWallet(cpf);
 
     let money = user.wallet;
+
+    car = user.shoppingcart.shoppingValue;
+
+    if (car === 0) {
+      throw new NotFoundException('Carrinho Vazio');
+    }
+
+    if (money > car) {
+      money = -car;
+      salesman.amount = +car;
+    }
   }
 
   private async preloadProductByName(name: string): Promise<Product> {

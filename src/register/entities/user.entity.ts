@@ -1,16 +1,9 @@
-import {
-  Column,
-  Entity,
-  JoinColumn,
-  OneToOne,
-  PrimaryColumn,
-  PrimaryGeneratedColumn,
-} from 'typeorm';
+import { Column, Entity, JoinColumn, OneToOne, PrimaryColumn } from 'typeorm';
 import { ShoppingCart } from './shoppingCar.entity';
 
 @Entity('users')
 export class Users {
-  @PrimaryGeneratedColumn()
+  @PrimaryColumn()
   cpf: string;
 
   @Column()
@@ -30,6 +23,5 @@ export class Users {
 
   @OneToOne(() => ShoppingCart, (shoppingcart) => shoppingcart.users)
   @JoinColumn()
-  shoppingCart: ShoppingCart;
-    shoppingcart: any;
+  shoppingcart: ShoppingCart;
 }
